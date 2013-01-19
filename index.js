@@ -2,11 +2,13 @@
 
 // ### Arguments
 // * `destination` - Object where new functionality will be added. The mixins assume that `destination` will have a mongoose model available at `destination.model` and a schema at `destination.schema`
-// * `source` - String name of the mixin package to load via `require('./'+source)`. If `source` is an object, it will be treated as the pre-loaded object with functionality to copy.
+// * `source` - String name of the mixin package to load via `require`. If `source` is an object, it will be treated as the pre-loaded object with functionality to copy.
+// * `pkgDir` - Optional String path to the mixin packages. Defaults to './pkg';
 
-exports.extend = function(destination, source) {
+exports.extend = function(destination, source, pkgDir) {
+	pkgDir = pkgDir || './pkg';
 	if(typeof source === 'string') {
-		source = require('./'+source);
+		source = require(pkgDir+'/'+source);
 	}
 	for(var prop in source) {
 		destination[prop] = source[prop];

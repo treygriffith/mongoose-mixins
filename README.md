@@ -46,7 +46,7 @@ models.Things.getColor(id_of_thing, function(err, color) {
 
 Mixins
 ------
-Mixins are separated into packages, that can be referenced by their string name. As of now, there are only two packages of mixins available:
+Mixins are separated into packages, that can be referenced by their string name. As of now, there are only two packages of mixins available in the core of `mongoose-mixins`:
 
 1. `'basics'` :
 	* `getAll` - retrieve all the documents in a collection
@@ -55,3 +55,12 @@ Mixins are separated into packages, that can be referenced by their string name.
 	* `getAllArrays` - retrieve and concatenate all the values in array fields on all the documents (de-duplicates)
 	* `getArray` - retrieve an array on a document
 	* `addToArray` - performs an addToSet operation, adding element or group of elements to an array field
+
+You can easily add your own mixins by specifying the directory in which they reside:
+``` javascript
+mixins.extend(exports, 'my_custom_mixin_package', './my_mixin_packages')
+```
+
+Notes
+-----
+This is a new concept that I've found to be useful in my workflow to keep my code DRY, but it will probably change significantly as I become more accustomed to programming in this paradigm. To that end, pull requests are welcome to improve functionality, especially the form of new default mixin packages.
