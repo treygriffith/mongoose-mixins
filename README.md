@@ -56,9 +56,9 @@ Mixins are separated into packages, that can be referenced by their string name.
 	* `getArray` - retrieve an array on a document
 	* `addToArray` - performs an addToSet operation, adding element or group of elements to an array field
 
-You can easily add your own mixins by specifying the directory in which they reside:
+You can easily add your own mixins by requiring them from the directory in which they reside:
 ``` javascript
-mixins.extend(exports, 'my_custom_mixin_package', './my_mixin_packages')
+mixins.extend(exports, require('/my_own_mixins/mixin'));
 ```
 
 Notes
