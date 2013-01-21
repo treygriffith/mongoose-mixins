@@ -2,10 +2,7 @@ Mixins for Mongoose Models
 ==========================
 ### Extend common functionality in an MVC environment
 
-This module requires a certain paradigm in working with [Mongoose](http://www.mongoosejs.com) models. It works best in an MVC environment, although that is by no means a requirement.
-It requires that you have a model, let's say `things`, which works with a MongoDB collection, also called `things`, via Mongoose. `things` should have a `model` property, such that `things.model` is a reference to the Mongoose model, and another property, `schema`, that is a reference to the Mongoose schema.
-
-You can then extend your `things` model with [mixins](http://en.wikipedia.org/wiki/Mixin) to provide it with added functionality.
+If your Node.js app is in an MVC format, where you have your models exposed as properties on a global `models` variable (e.g. `models.Posts`, `models.Authors`), you probably find yourself re-writing similar methods for every new model you add (e.g. `models.Posts.createPost`, `models.Authors.createAuthor`). With [mixins](http://en.wikipedia.org/wiki/Mixin), you can add functionality to your models while keeping your code DRY.
 
 Installation
 -------------
@@ -17,43 +14,48 @@ $ git clone git://github.com/treygriffith/mongoose-mixins.git node_modules/mongo
 
 Usage
 -----
-Before we start extending functionality, we set up our `things` model in such a way that it can be extended
+Before we start extending functionality, we set up our `authors` model in such a way that it can be extended
 ``` javascript
-exports.schema = new Schema({
+models = {};
+models.Authors = {};
+
+models.Authors.schema = new Schema({
 	name: String,
-	color: String
+	age: Number,
+	interests: [String]
 });
-exports.model = mongoose.model(exports.schema);
+models.Authors.model = mongoose.model(models.Authors.schema);
 ```
 
 Now that we have an environment that will support our mongoose mixins, we can extend their functionality
 ``` javascript
 var mixins = require('mongoose-mixins');
-mixins.extend(exports, 'basics');
+mixins.extend(models.Authors, 'arrayFields');
 ```
 
-Now we have some functionality exposed on our `things` model! Let's try it out:
+Now we have some functionality exposed on our `authors` model! Let's try it out:
 ``` javascript
-exports.printEverything = function() {
-	exports.getAll(function(err, things) {
+models.Authors.printAuthors = function() {
+	this.getAll(function(err, authors) {
 		if(err) {
 			console.log(err);
 			return;
 		}
-		console.log(things);
+		console.log(authors);
 	})	
 };
 ```
 
-We can [partially apply](http://en.wikipedia.org/wiki/Partial_application) our methods to make them more specific to `things`.
+We can [partially apply](http://en.wikipedia.org/wiki/Partial_application) our methods to make them more specific to `authors`.
 ``` javascript
-exports.getColor = mixins.partial(exports.getField, _, 'color'); // `_` must be undefined for this to work as expected
+var _;
+models.Authors.getInterests = mixins.partial(models.Authors.getArray, _, 'interests'); // `_` must be undefined for this to work as expected
 ```
 
-If this is in an MVC environment where `things` is exposed as `models.Things`, we can use our new partially applied function like so:
+We can use our new partially applied function like so:
 ``` javascript
-models.Things.getColor(id_of_thing, function(err, color) {
-	console.log(id_of_thing+" is "+color); // prints 507f1f77bcf86cd799439011 is green
+models.Authors.getInterests(author_id, function(err, interests) {
+	console.log(author_id+" is interested in "+interests.join(', ')+".""); // prints 507f1f77bcf86cd799439011 is interested in books, writing.
 });
 ```
 
