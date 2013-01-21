@@ -1,8 +1,8 @@
 // Allow richer interactions with Array fields with the arrayFields mixins
 
-var mixins = require('../');
-var extend = mixins.extend;
-var partial = mixins.partial;
+var mixins = require('../'),
+	utils = require('../utils'),
+	extend = mixins.extend;
 
 extend(exports, 'basics');
 
@@ -29,11 +29,11 @@ exports.getAllArrays = function(condition, field, cb) {
 				cb(err || new Error("No records found."));
 				return;
 			}
-			var _docs = [];
-			docs.forEach(function(docs) {
-				_docs = _docs.concat(doc[field]);
+			var els = [];
+			docs.forEach(function(doc) {
+				utils.addEachToSet(els, doc[field] || []);
 			});
-			cb(null, _docs);
+			cb(null, els);
 		});
 };
 
@@ -48,13 +48,15 @@ exports.getAllArrays = function(condition, field, cb) {
 // * `err` - Error
 // * `arr` - Array located on `field` for the document, or an empty array if undefined
 
-exports.getArray = partial(exports.getField, _, _, function(err, doc) {
+exports.getArray = function(id, field, cb) {
+	this.getField(id, field, function(err, els) {
 		if(err) {
 			cb(err);
 			return;
 		}
-		cb(null, doc[field] || []);
+		cb(null, els || []);
 	});
+};
 
 // Add an element or an array of elements to a field with de-duplication
 // NOTE: this will not work with fields that are arrays of arrays, as it assumes that any array that gets passed in is intended to be concatenated, not added as an element

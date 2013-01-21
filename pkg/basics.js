@@ -52,6 +52,10 @@ exports.getField = function(id, field, cb) {
 			cb(err || new Error("No such record."));
 			return;
 		}
-		cb(null, doc[field]);
+		var ret = doc[field];
+		if(typeof doc[field] !== 'undefined' && typeof doc[field].toObject === 'function') {
+			ret = doc[field].toObject();
+		}
+		cb(null, ret);
 	});
 };

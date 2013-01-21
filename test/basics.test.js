@@ -3,9 +3,7 @@ var start = require('./common.js'),
 	mongoose = start.mongoose,
 	Schema = mongoose.Schema,
 	mixins = require('../'),
-	random = function() {
-		return Math.random().toString(36).substring(2);
-	};
+	random = require('../utils').random;
 
 exports.schema = new Schema({
 	title: String,
@@ -132,5 +130,58 @@ describe('getAll', function() {
 				});
 			});
 		});	
+	});
+});
+
+describe('getField', function() {
+	it('can use an object with an _id property to find the field', function(done) {
+		var db = start(),
+			PostB = db.model('basics_test', collection),
+			model = {
+				model:PostB,
+				schema:exports.schema
+			};
+
+		mixins.extend(model, 'basics');
+
+		var post1 = new PostB({
+			title: 'BMy title',
+			text: 'My text'
+		});
+
+		post1.save(function(err, post) {
+			assert.ifError(err);
+			model.getField(post1, 'text', function(err, text) {
+				assert.ifError(err);
+				assert.equal(text, post1.text);
+				db.close();
+				done();
+			});
+		});	
+	});
+	it('returns the contents of one field', function(done) {
+		var db = start(),
+			PostB = db.model('basics_test', collection),
+			model = {
+				model:PostB,
+				schema:exports.schema
+			};
+
+		mixins.extend(model, 'basics');
+
+		var post1 = new PostB({
+			title: 'BMy title',
+			text: 'My text'
+		});
+
+		post1.save(function(err, post) {
+			assert.ifError(err);
+			model.getField(post1._id, 'text', function(err, text) {
+				assert.ifError(err);
+				assert.equal(text, post1.text);
+				db.close();
+				done();
+			});
+		});		
 	});
 });
