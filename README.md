@@ -55,7 +55,7 @@ models.Authors.getInterests = mixins.partial(models.Authors.getArray, _, 'intere
 We can use our new partially applied function like so:
 ``` javascript
 models.Authors.getInterests(author_id, function(err, interests) {
-	console.log(author_id+" is interested in "+interests.join(', ')+".""); // prints 507f1f77bcf86cd799439011 is interested in books, writing.
+	console.log(author_id+" is interested in "+interests.join(', ')+"."); // prints 507f1f77bcf86cd799439011 is interested in books, writing.
 });
 ```
 
