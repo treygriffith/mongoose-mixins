@@ -32,7 +32,20 @@ var mixins = require('mongoose-mixins');
 mixins.extend(exports, 'basics');
 ```
 
-Now we have some functionality exposed on our `things` model! We can [partially apply](http://en.wikipedia.org/wiki/Partial_application) our methods to make them more specific to `things`.
+Now we have some functionality exposed on our `things` model! Let's try it out:
+``` javascript
+exports.printEverything = function() {
+	exports.getAll(function(err, things) {
+		if(err) {
+			console.log(err);
+			return;
+		}
+		console.log(things);
+	})	
+};
+```
+
+We can [partially apply](http://en.wikipedia.org/wiki/Partial_application) our methods to make them more specific to `things`.
 ``` javascript
 exports.getColor = mixins.partial(exports.getField, _, 'color'); // `_` must be undefined for this to work as expected
 ```
