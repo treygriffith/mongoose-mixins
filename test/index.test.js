@@ -6,7 +6,7 @@ describe('extend', function() {
 	var obj = {};
 	it('should add functions to obj with a string package name', function() {
 		mixins.extend(obj, 'basics');
-		assert.equal(typeof obj.getAll, 'function');	
+		assert.equal(typeof obj.getAll, 'function');
 	});
 	it('should add functions to obj with an object literal of functions', function() {
 		mixins.extend(obj, {myFn: function(){}});
@@ -31,5 +31,11 @@ describe('partial', function() {
 		var _;
 		var timestamp = mixins.partial(echo, _, ' at 12:00pm');
 		assert.equal(timestamp('We had an error'), 'We had an error at 12:00pm');
+	});
+	it('should not keep arguments from previous calls', function() {
+		var _;
+		var timestamp = mixins.partial(echo, _, ' at 12:00pm');
+		timestamp('We had an error');
+		assert.equal(timestamp('We had another error'), 'We had another error at 12:00pm');
 	});
 });
